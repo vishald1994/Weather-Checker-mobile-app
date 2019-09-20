@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<!--Let browser know website is optimized for mobile-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>Weather</title>
+
+
+	<!--Import Google Icon Font-->
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+            
+	
+</head>
+<body>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" href="#">Weather</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="index.html">Current City <span class="sr-only">(current)</span></a>
+      </li>
+      
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" id="key">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="button" id="check">Search</button>
+    </form>
+  </div>
+</nav>
+
+<div class="container"><br><br>
+	<div class="jumbotron" style="background-color: #fff;">
+		<div class="main" style="display: none;">
+			<center><img src="assets/cloudday1.svg" width="200" height="200" id="condition"></center>
+		
+		<center><h1 style="font-size: 65px;" id="weather"></h1></center>
+		<p id="min_max" align="center">26</p>
+		<p id="city" align="center" style="font-size: 55px;">Bangaluru</p>
+		</div>
+		
+	</div>
+</div>
+
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+
+
+  <script type="text/javascript">
+  	$(document).ready(function()
+  	{
+    $('#check').on('click',function()
+    {
+     var citykey = $('#key').val();
+     getWeather(citykey);
+    });
+         
+  		 function getWeather(city)
+  		 {
+
+  		 	$('.main').css('display','block');
+  		 	var url = "http://api.openweathermap.org/data/2.5/weather?q="+city+"&APPID=16020d8d307b65395a579b8cdb9b33dd&units=metric";
+         
+
+
+          $.ajax({
+    url: url,
+    type: 'GET',
+    success: function(data){ 
+        console.log(data)
+        var weatherData = data;
+           var desc= weatherData.weather[0].description;
+           var upperDesc= desc.toUpperCase();
+           var temp = parseInt(weatherData.main.temp);
+           var temp_min = parseInt(weatherData.main.temp_min);
+           var temp_max = parseInt(weatherData.main.temp_max);
+           console.log(temp);
+           $('#weather').html(temp+"<sup>o</sup>C");
+           $('#min_max').html("min~"+temp_min+"<sup>o</sup>C max~"+temp_max+"<sup>o</sup>C");
+           $('#city').html(city);
+           console.log(desc);
+           var image_name ="";
+           if (desc == 'scattered clouds')
+                image_name = 'assets/cloudy-day-3.svg';
+            else if (desc == 'haze')
+            {
+                image_name = 'mist.png';
+            }
+            else if (desc == 'overcast clouds')
+            {
+                image_name = 'assets/cloudy-night-2.svg';
+            }
+            else if (desc == 'mist')
+            {
+            	image_name = 'assets/snowy-4.svg';
+            }
+            else if (desc == 'clear sky')
+            {
+                image_name = 'assets/day.svg';
+            }
+            else if (desc == 'light rain')
+            {
+                 image_name = 'assets/rainy-4.svg';
+            }
+            else if (desc == 'drizzle')
+            {
+                image_name = 'assets/rainy-3.svg';
+            }
+            else if (desc == 'thunderstorm with rain')
+            {
+                image_name = 'assets/thunder.svg';
+            }
+            else if (desc == 'few clouds')
+            {
+                image_name = 'assets/cloudy.svg';
+            }
+            else if (desc=="light intensity drizzle") 
+            {
+            	image_name = 'assets/rainy-3.svg';
+            }
+            else
+            {
+                image_name = 'sun.png';
+            }
+            $('#condition').attr('src',image_name);
+    },
+    error: function(e) {
+    	console.log(e)
+        var statuscode = e.status; //or whatever
+        if (statuscode==400) 
+        {
+        	alert('Invalid city!');
+        }
+    }
+});
+  		 }
+
+
+  		 function getKey()
+  		 {
+alert('Hello');
+  		 }
+    $.get('https://ipinfo.io/json',function(data)
+    {
+      console.log(data);
+      var userinfo = data;
+      var city = userinfo.city;
+      var country = userinfo.country;
+      console.log(city+"("+country+")");
+      //$("#city").text(city);
+      //$("#nav_city").text(city);
+      //$("#inner_city").text(city+"("+country+")");
+      getWeather(city);
+    });
+
+   
+  	});
+  </script>
+</body>
+</html>
